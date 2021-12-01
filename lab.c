@@ -98,14 +98,14 @@ int main (int  argc, char *argv[]) {
     char *text_of_child = "Child: ";
     int first_mutex = 0;
 
-    printf("pisya\n");
+    printf("p1\n");
 
     errno = initializeOfMutexes(mutexes);
     int result_of_init = checkOfErrors(errno, "Error of initialization of attributes of mutexes");
     if (result_of_init != SUCCESS) {
         exit(EXIT_FAILURE);
     }
-    printf("pisya2\n");
+    printf("p2\n");
 
     errno = lockOfMutex(first_mutex, mutexes);
     int result_of_lock = checkOfErrors(errno, msg_about_error_of_lock_mtx);
@@ -114,7 +114,7 @@ int main (int  argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("pisya3\n");
+    printf("p3\n");
 
     errno = pthread_create(&id_of_thread, NULL, printText, text_of_child);
     int result_of_creating = checkOfErrors(errno, "Error of creating of thread");
@@ -123,13 +123,13 @@ int main (int  argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("pisya4\n");
+    printf("p4\n");
 
     while (readiness != true) {}
 
     printText(text_of_parent, mutexes);
 
-    printf("pisya5\n");
+    printf("p5\n");
 
     errno = pthread_join(id_of_thread, NULL);
     int result_of_joining = checkOfErrors(errno, "Error of joining of thread");
@@ -138,7 +138,7 @@ int main (int  argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("pisya6\n");
+    printf("p6\n");
 
     destroyOfMutexes(count_of_mutexes, mutexes);
     return SUCCESS;
