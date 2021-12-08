@@ -23,16 +23,19 @@ int checkOfErrors (int result_of_action, char *info_about_error) {
     }
     return SUCCESS;
 }
-void destroyOfMutexes (int count_of_mtxs, pthread_mutex_t *mutexes) {
+
+int destroyOfMutexes (int count_of_mtxs, pthread_mutex_t *mutexes) {
     for (int i = 0; i < count_of_mtxs; i++) {
         errno = pthread_mutex_destroy(&mutexes[i]);
         checkOfErrors(errno, "Error of destroying of mutexes");
     }
+    return SUCCESS;
 }
 
 int initializeOfMutexes (pthread_mutex_t *mutexes) {
     pthread_mutexattr_t mattr;
-
+    
+    errno = pthread_mutexattr_init(&mattr);
     checkOfErrors(errno, "Error of initialization of attributes of mutexes");
 
     errno = pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_ERRORCHECK);
@@ -46,7 +49,7 @@ int initializeOfMutexes (pthread_mutex_t *mutexes) {
             exit(EXIT_FAILURE);
         }
     }
-
+    
     return SUCCESS;
 }
 
@@ -67,26 +70,32 @@ void *printText (void* whois, pthread_mutex_t *mutexes) {
     int current_mutex = 0,
         next_mutex = 0;
 
-    if (!readiness) {
+    if (readiness == false) {
         current_mutex = 2;
 
         errno = lockOfMutex(current_mutex, &mutexes[current_mutex]);
         checkOfErrors(errno, msg_about_error_of_lock_mtx);
+        
         readiness = true;
     }
 
     for (int i = 0; i < count_of_lines; i++) {
         next_mutex = (current_mutex + 1) % count_of_mutexes;
+        
         errno = lockOfMutex(next_mutex, &mutexes[next_mutex]);
         checkOfErrors(errno, msg_about_error_of_lock_mtx);
+        
         printf("%s %d\n", string, i++);
+        
         errno = unlockOfMutex(current_mutex, &mutexes[current_mutex]);
         checkOfErrors(errno, msg_about_error_of_unlock_mtx);
+        
         current_mutex = next_mutex;
     }
 
     errno = unlockOfMutex(current_mutex, &mutexes[current_mutex]);
     checkOfErrors(errno, msg_about_error_of_unlock_mtx);
+    
     readiness = false;
 }
 
