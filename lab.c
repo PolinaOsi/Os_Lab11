@@ -103,8 +103,8 @@ void *printText (void* whois, pthread_mutex_t *mutexes) {
 int main (int  argc, char *argv[]) {
     pthread_t id_of_thread;
     pthread_mutex_t mutexes[count_of_mutexes];
-    char *text_of_parent = "Parent: ";
-    char *text_of_child = "Child: ";
+    char text_of_parent[10] = "Parent: ";
+    char text_of_child[10] = "Child: ";
     int first_mutex = 0;
 
     printf("p1\n");
