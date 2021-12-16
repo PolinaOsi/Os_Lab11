@@ -81,7 +81,7 @@ void *printText (args_of_thread *argumets) {
     }
 
     for (int i = 0; i < count_of_lines; i++) {
-        errno = lockOfMutex((num_of_thrd + 2) % count_of_mutexes, mtxs);
+        lockOfMutex((num_of_thrd + 2) % count_of_mutexes, mtxs);
 
         printf("%s %d\n", text, i);
 
