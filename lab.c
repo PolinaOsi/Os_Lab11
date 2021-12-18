@@ -13,8 +13,6 @@
 #define time_for_sleep 1
 #define size_of_string 10
 
-char* msg_about_error_of_lock_mtx = "Error of lock of mutex";
-char* msg_about_error_of_unlock_mtx = "Error of unlock of mutex";
 
 typedef struct st_args_of_thread {
     pthread_mutex_t *mutexes;
@@ -69,7 +67,7 @@ int initializeOfMutexes (pthread_mutex_t *mutexes) {
 
 int lockOfMutex (int number_of_mtx, pthread_mutex_t *mutexes) {
     errno = pthread_mutex_lock(&mutexes[number_of_mtx]);
-    int result_of_lock = checkOfErrors(errno, msg_about_error_of_lock_mtx);
+    int result_of_lock = checkOfErrors(errno, "Error of lock of mutex");
     if (result_of_lock != SUCCESS) {
         destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
@@ -79,7 +77,7 @@ int lockOfMutex (int number_of_mtx, pthread_mutex_t *mutexes) {
 
 int unlockOfMutex (int number_of_mtx, pthread_mutex_t *mutexes) {
     errno = pthread_mutex_unlock(&mutexes[number_of_mtx]);
-    int result_of_unlock = checkOfErrors(errno, msg_about_error_of_unlock_mtx);
+    int result_of_unlock = checkOfErrors(errno, "Error of unlock of mutex");
     if(result_of_unlock != SUCCESS) {
         destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
