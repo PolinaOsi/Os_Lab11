@@ -138,14 +138,18 @@ int main (int  argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    errno = lockOfMutex(args_of_parent.number_of_thread, args_of_parent.mutexes);
-    checkOfErrors(errno, "Error of lock of mutex before pthread_create() function");
+    errno = pthread_mutex_lock(&args_of_parent.mutexes[args_of_parent.number_of_thread]);
+    int result_of_lock = checkOfErrors(errno, "Error of lock of mutex before pthread_create() function");
+    if (result_of_lock != SUCCESS) {
+        destroyOfMutexes(mutexes);
+        exit(EXIT_FAILURE);
+    }
 
 
     errno = pthread_create(&id_of_thread, NULL, printText, &args_of_child);
     int result_of_creating = checkOfErrors(errno, "Error of creating of thread");
     if (result_of_creating != SUCCESS) {
-        destroyOfMutexes(mutexes );
+        destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
     }
 
@@ -153,8 +157,12 @@ int main (int  argc, char *argv[]) {
 
     printText(&args_of_parent);
 
-    errno = unlockOfMutex(args_of_parent.number_of_thread, args_of_parent.mutexes);
-    checkOfErrors(errno, "Error of unlock of mutex before pthread_join() function");
+    errno = pthread_mutex_unlock(&args_of_parent.mutexes[args_of_parent.number_of_thread]);
+    int result_of_unlock = checkOfErrors(errno, "Error of unlock of mutex before pthread_join() function");
+    if(result_of_unlock != SUCCESS) {
+        destroyOfMutexes(mutexes);
+        exit(EXIT_FAILURE);
+    }
 
     errno = pthread_join(id_of_thread, NULL);
     int result_of_joining = checkOfErrors(errno, "Error of joining of thread");
@@ -163,8 +171,13 @@ int main (int  argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    errno = destroyOfMutexes(mutexes);
-    checkOfErrors(errno, "Error of destroying of mutexes");
+    for (int i = 0; i < count_of_mutexes; i++) {
+        errno = pthread_mutex_destroy(&mutexes[i]);
+        int result_of_destroying = checkOfErrors(errno, "Error of destroying of mutexes");
+        if (result_of_destroying != SUCCESS) {
+            exit(EXIT_FAILURE);
+        }
+    }
 
     return SUCCESS;
 }
