@@ -33,7 +33,7 @@ int destroyOfMutexes (pthread_mutex_t *mutexes) {
         errno = pthread_mutex_destroy(&mutexes[i]);
         int result_of_destroying = checkOfErrors(errno, "Error of destroying of mutexes");
         if (result_of_destroying != SUCCESS) {
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
     }
     return SUCCESS;
@@ -45,13 +45,13 @@ int initializeOfMutexes (pthread_mutex_t *mutexes) {
     errno = pthread_mutexattr_init(&mattr);
     int result_of_init_of_mattr = checkOfErrors(errno, "Error of initialization of attributes of mutexes");
     if (result_of_init_of_mattr != SUCCESS) {
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     errno = pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_ERRORCHECK);
     int result_of_setting_type = checkOfErrors(errno, "Error of creation of attributes of mutexes");
     if (result_of_setting_type != SUCCESS) {
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     for (int i = 0; i < count_of_mutexes; i++) {
@@ -59,7 +59,7 @@ int initializeOfMutexes (pthread_mutex_t *mutexes) {
         int result_of_init = checkOfErrors(errno, "Error of initialization of mutexes");
         if (result_of_init != SUCCESS) {
             destroyOfMutexes(&mutexes[i]);
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
     }
     return SUCCESS;
@@ -70,7 +70,7 @@ int lockOfMutex (int number_of_mtx, pthread_mutex_t *mutexes) {
     int result_of_lock = checkOfErrors(errno, "Error of lock of mutex");
     if (result_of_lock != SUCCESS) {
         destroyOfMutexes(mutexes);
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
     return SUCCESS;
 }
@@ -80,7 +80,7 @@ int unlockOfMutex (int number_of_mtx, pthread_mutex_t *mutexes) {
     int result_of_unlock = checkOfErrors(errno, "Error of unlock of mutex");
     if(result_of_unlock != SUCCESS) {
         destroyOfMutexes(mutexes);
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
     return SUCCESS;
 }
