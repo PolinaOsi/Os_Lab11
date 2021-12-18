@@ -136,13 +136,11 @@ int main (int  argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    errno = pthread_mutex_lock(&args_of_parent.mutexes[args_of_parent.number_of_thread]);
-    int result_of_lock = checkOfErrors(errno, "Error of lock of mutex before pthread_create() function");
+    int result_of_lock = lockOfMutex(args_of_parent.number_of_thread, args_of_parent.mutexes);
     if (result_of_lock != SUCCESS) {
-        destroyOfMutexes(mutexes);
+        destroyOfMutexes(args_of_parent.mutexes);
         exit(EXIT_FAILURE);
     }
-
 
     errno = pthread_create(&id_of_thread, NULL, printText, &args_of_child);
     int result_of_creating = checkOfErrors(errno, "Error of creating of thread");
@@ -154,10 +152,9 @@ int main (int  argc, char *argv[]) {
     sleep(time_for_sleep);
 
     printText(&args_of_parent);
-
-    errno = pthread_mutex_unlock(&args_of_parent.mutexes[args_of_parent.number_of_thread]);
-    int result_of_unlock = checkOfErrors(errno, "Error of unlock of mutex before pthread_join() function");
-    if(result_of_unlock != SUCCESS) {
+    
+    int result_of_unlock = unlockOfMutex(args_of_parent.number_of_thread, args_of_parent.mutexes);
+    if (result_of_unlock != SUCCESS) {
         destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
     }
@@ -168,11 +165,11 @@ int main (int  argc, char *argv[]) {
         destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
     }
-    
+
     int result_of_destroying = destroyOfMutexes(mutexes);
     if (result_of_destroying != SUCCESS) {
         exit(EXIT_FAILURE);
     }
-    
+
     return SUCCESS;
 }
