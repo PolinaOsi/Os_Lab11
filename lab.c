@@ -168,14 +168,11 @@ int main (int  argc, char *argv[]) {
         destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
     }
-
-    for (int i = 0; i < count_of_mutexes; i++) {
-        errno = pthread_mutex_destroy(&mutexes[i]);
-        int result_of_destroying = checkOfErrors(errno, "Error of destroying of mutexes");
-        if (result_of_destroying != SUCCESS) {
-            exit(EXIT_FAILURE);
-        }
+    
+    int result_of_destroying = destroyOfMutexes(mutexes);
+    if (result_of_destroying != SUCCESS) {
+        exit(EXIT_FAILURE);
     }
-
+    
     return SUCCESS;
 }
