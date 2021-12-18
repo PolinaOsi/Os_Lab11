@@ -64,7 +64,6 @@ int initializeOfMutexes (pthread_mutex_t *mutexes) {
             exit(EXIT_FAILURE);
         }
     }
-
     return SUCCESS;
 }
 
