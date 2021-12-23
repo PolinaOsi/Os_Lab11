@@ -138,14 +138,12 @@ int main (int  argc, char *argv[]) {
 
     int result_of_lock = lockOfMutex(args_of_parent.number_of_thread, args_of_parent.mutexes);
     if (result_of_lock != SUCCESS) {
-        destroyOfMutexes(args_of_parent.mutexes);
         exit(EXIT_FAILURE);
     }
 
     errno = pthread_create(&id_of_thread, NULL, printText, &args_of_child);
     int result_of_creating = checkOfErrors(errno, "Error of creating of thread");
     if (result_of_creating != SUCCESS) {
-        destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
     }
 
@@ -155,7 +153,6 @@ int main (int  argc, char *argv[]) {
     
     int result_of_unlock = unlockOfMutex(args_of_parent.number_of_thread, args_of_parent.mutexes);
     if (result_of_unlock != SUCCESS) {
-        destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
     }
 
