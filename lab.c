@@ -144,6 +144,7 @@ int main (int  argc, char *argv[]) {
     errno = pthread_create(&id_of_thread, NULL, printText, &args_of_child);
     int result_of_creating = checkOfErrors(errno, "Error of creating of thread");
     if (result_of_creating != SUCCESS) {
+        destroyOfMutexes(mutexes);
         exit(EXIT_FAILURE);
     }
 
