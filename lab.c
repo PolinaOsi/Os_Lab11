@@ -89,29 +89,55 @@ void *printText (args_of_thread *argumets) {
     char* text = argumets->text;
     pthread_mutex_t *mtxs = argumets->mutexes;
     int num_of_thrd = argumets->number_of_thread;
+    int result_of_lock;
+    int result_of_unlock;
 
     if (num_of_thrd == 2) {
-        lockOfMutex(num_of_thrd % count_of_mutexes, mtxs);
+        result_of_lock = lockOfMutex(num_of_thrd % count_of_mutexes, mtxs);
+        if(result_of_lock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
     }
 
     for (int i = 0; i < count_of_lines; i++) {
-        lockOfMutex((num_of_thrd + 2) % count_of_mutexes, mtxs);
+        result_of_lock = lockOfMutex((num_of_thrd + 2) % count_of_mutexes, mtxs);
+        if(result_of_lock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
 
         printf("%s %d\n", text, i);
 
-        unlockOfMutex(num_of_thrd, mtxs);
+        result_of_unlock = unlockOfMutex(num_of_thrd, mtxs);
+        if(result_of_unlock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
 
-        lockOfMutex((num_of_thrd + 1) % count_of_mutexes, mtxs);
+        result_of_lock = lockOfMutex((num_of_thrd + 1) % count_of_mutexes, mtxs);
+        if(result_of_lock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
 
-        unlockOfMutex((num_of_thrd + 2) % count_of_mutexes, mtxs);
+        result_of_unlock = unlockOfMutex((num_of_thrd + 2) % count_of_mutexes, mtxs);
+        if(result_of_unlock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
 
-        lockOfMutex(num_of_thrd, mtxs);
+        result_of_lock = lockOfMutex(num_of_thrd, mtxs);
+        if(result_of_lock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
 
-        unlockOfMutex((num_of_thrd + 1) % count_of_mutexes, mtxs);
+        result_of_unlock = unlockOfMutex((num_of_thrd + 1) % count_of_mutexes, mtxs);
+        if(result_of_unlock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
     }
 
     if (num_of_thrd == 2) {
-        unlockOfMutex(num_of_thrd, mtxs);
+        result_of_unlock = unlockOfMutex(num_of_thrd, mtxs);
+        if(result_of_unlock != SUCCESS) {
+            return (void *)EXIT_FAILURE;
+        }
     }
 }
 
@@ -150,17 +176,24 @@ int main (int  argc, char *argv[]) {
 
     sleep(time_for_sleep);
 
-    printText(&args_of_parent);
-    
+    int result_of_print_parent;
+    result_of_print_parent = (int)printText(&args_of_parent);
+
     int result_of_unlock = unlockOfMutex(args_of_parent.number_of_thread, args_of_parent.mutexes);
     if (result_of_unlock != SUCCESS) {
         exit(EXIT_FAILURE);
     }
 
-    errno = pthread_join(id_of_thread, NULL);
+    int result_of_print_child;
+    errno = pthread_join(id_of_thread, (void **)&result_of_print_child);
     int result_of_joining = checkOfErrors(errno, "Error of joining of thread");
     if (result_of_joining != SUCCESS) {
         destroyOfMutexes(mutexes);
+        exit(EXIT_FAILURE);
+    }
+
+    if (result_of_print_child != SUCCESS || result_of_print_parent != SUCCESS) {
+        fprintf(stderr, "Error in printText() function");
         exit(EXIT_FAILURE);
     }
 
