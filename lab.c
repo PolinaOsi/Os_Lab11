@@ -49,7 +49,7 @@ int initializeOfMutexes (pthread_mutex_t *mutexes) {
     }
 
     errno = pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_ERRORCHECK);
-    int result_of_setting_type = checkOfErrors(errno, "Error of creation of attributes of mutexes");
+    int result_of_setting_type = checkOfErrors(errno, "Error of setting of attributes of mutexes");
     if (result_of_setting_type != SUCCESS) {
         return EXIT_FAILURE;
     }
