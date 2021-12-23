@@ -139,6 +139,7 @@ void *printText (args_of_thread *argumets) {
             return (void *)EXIT_FAILURE;
         }
     }
+    return SUCCESS;
 }
 
 int main (int  argc, char *argv[]) {
